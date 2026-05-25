@@ -1,68 +1,32 @@
 package com.example.gonzalezpauandroidstact19
-
+import RetrofitClient
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class Exercici1 : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: PostAdapter
-    private val viewModel: PostViewModel by viewModels()
-
-    companion object {
-        private const val TAG = "MainActivity"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_exercici1)
 
-        initViews()
-        setupRecyclerView()
-        observeViewModel()
-        setupButton()
-    }
+        val recycler = findViewById<RecyclerView>(R.id.recyclerPosts)
+        recycler.layoutManager = LinearLayoutManager(this)
+        var call = RetrofitClient.instance.getPosts()
 
-    private fun initViews() {
-        recyclerView = findViewById(R.id.recyclerView)
-    }
+        call.enqueue(object : Callback<List<Post>> {
 
-    private fun setupRecyclerView() {
-        adapter = PostAdapter()
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@Exercici1)
-            this.adapter = this@Exercici1.adapter
-        }
-    }
-
-    private fun observeViewModel() {
-        viewModel.posts.observe(this) { posts ->
-            adapter.submitList(posts)
-        }
-
-        viewModel.error.observe(this) { error ->
-            error?.let {
-                Log.e(TAG, "Error: $it")
-                Toast.makeText(this, "Error carregant posts: $it", Toast.LENGTH_SHORT).show()
+            override fun onResponse(call: retrofit2.Call<List<Post>>, response: Response<List<Post>>) {
+                recycler.adapter = PostAdapter(response.body()!!)
             }
-        }
 
-        viewModel.loading.observe(this) { isLoading ->
-            val button = findViewById<Button>(R.id.btnLoadPosts)
-            button.isEnabled = !isLoading
-            button.text = if (isLoading) "Carregant..." else "Carregar 100 Posts"
-        }
-    }
-
-    private fun setupButton() {
-        findViewById<Button>(R.id.btnLoadPosts).setOnClickListener {
-            viewModel.loadPosts()
-        }
+            override fun onFailure(call: retrofit2.Call<List<Post>>, t: Throwable) {
+                Toast.makeText(this@Exercici1, "Error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
