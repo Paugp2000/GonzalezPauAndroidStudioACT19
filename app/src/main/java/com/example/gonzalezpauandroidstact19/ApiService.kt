@@ -11,4 +11,7 @@ interface ApiService {
 
     @GET("posts/{id}")
     fun getPostById(@Path("id") id: Int): Call<Post>
+
+    @GET("posts/{id}/comments")
+    fun getComments(@Path("id") id: Int): Call<List<Comment>>
 }

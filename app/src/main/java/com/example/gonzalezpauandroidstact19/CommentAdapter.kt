@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class CommentAdapter (private val comments: List<Post>) :
+class CommentAdapter(private val comments: List<Comment>) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -22,7 +22,7 @@ class CommentAdapter (private val comments: List<Post>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val c = comments[position]
-        holder.name.text = c.title
+        holder.name.text = c.email
         holder.body.text = c.body
     }
 

@@ -34,6 +34,14 @@ class Exercici2 : AppCompatActivity() {
 
                 override fun onFailure(call: Call<Post>, t: Throwable) {}
             })
+            // GET COMMENTS
+            RetrofitClient.instance.getComments(id).enqueue(object : Callback<List<Comment>> {
+                override fun onResponse(call: Call<List<Comment>>, response: Response<List<Comment>>) {
+                    recycler.adapter = CommentAdapter(response.body()!!)
+                }
+
+                override fun onFailure(call: Call<List<Comment>>, t: Throwable) {}
+            })
         }
     }
 }
