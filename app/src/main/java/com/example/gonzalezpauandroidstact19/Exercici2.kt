@@ -52,7 +52,13 @@ class Exercici2 : AppCompatActivity() {
             // GET COMMENTS
             RetrofitClient.instance.getComments(id).enqueue(object : Callback<List<Comment>> {
                 override fun onResponse(call: Call<List<Comment>>, response: Response<List<Comment>>) {
-                    recycler.adapter = CommentAdapter(response.body()!!)
+                    if (response.isSuccessful) {
+                        val comments = response.body() ?: emptyList()
+                        recycler.adapter = CommentAdapter(comments)
+                    }else{
+                        Log.e(TAG, "Response failed: ${response.code()}")
+                    }
+
                 }
 
                 override fun onFailure(call: Call<List<Comment>>, t: Throwable) {
